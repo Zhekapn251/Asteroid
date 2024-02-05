@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Entities;
 using Services;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -31,6 +33,12 @@ public class EnemySpawner : MonoBehaviour
         SetSpawnRate();
         SpawnLoadEnemies();
         StartCoroutine(SpawnEnemyCoroutine());
+    }
+
+    private void OnDestroy()
+    {
+        _levelSettingsService.OnLevelSettingsChanged -= SetSpawnRate;
+        _gameSaveService.OnGameSave -= GameSaveServiceOnGameSave;
     }
 
     private void SpawnLoadEnemies()

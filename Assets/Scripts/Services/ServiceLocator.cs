@@ -2,7 +2,7 @@
 
 namespace Services
 {
-    public class ServiceLocator
+    public static class ServiceLocator
     {
         private static readonly Dictionary<System.Type, object> _services = new Dictionary<System.Type, object>();
 

@@ -18,7 +18,6 @@ namespace Services
 
         public event Action OnWin;
         private int _currentScore;
-
         private int _currentLevel;
         private int _asteroidsDestroyed;
         private int _enemiesDestroyed;

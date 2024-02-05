@@ -84,7 +84,7 @@ namespace Misc
         
             _uiUpdateService.ScoreChanged(_playerProgressService.CurrentScore); ;
         
-            if (IsValidLevel(levelIndex))
+            if (NotValidLevel(levelIndex))
             {
                 Debug.LogError("Level index out of bounds");
                 return;
@@ -96,13 +96,13 @@ namespace Misc
 
         private IEnumerator SaveRoutine()
         {
-            yield return new WaitForSeconds(20f);
+            Debug.Log("SaveRoutine started");
+            yield return new WaitForSeconds(5f);
             _gameSaveService.BeginSave();
-            yield return new WaitForSeconds(0.5f);
             _gameSaveService.SaveGame();
         }
 
-        private bool IsValidLevel(int levelIndex) => 
+        private bool NotValidLevel(int levelIndex) => 
             levelIndex < 0 || levelIndex >= _levels.Length;
 
         private void ApplyLevelSettings(LevelSettings settings) =>

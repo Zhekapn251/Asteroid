@@ -5,6 +5,8 @@ namespace Services
 {
     public class GameBootstrapper: MonoBehaviour
     {
+        private const string SceneName = "Game";
+
         private void Awake()
         {
             IAudioService audioManager = FindObjectOfType<AudioManager>();
@@ -31,7 +33,7 @@ namespace Services
             IPlayerProgressService playerProgressService = new PlayerProgressService(levelSettings, uiUpdateService, gameSaveService);
             ServiceLocator.Register<IPlayerProgressService>(playerProgressService);
 
-            SceneManager.LoadScene("Game");
+            SceneManager.LoadScene(SceneName);
 
         }
     }
