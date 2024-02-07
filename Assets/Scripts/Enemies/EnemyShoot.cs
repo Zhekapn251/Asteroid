@@ -35,7 +35,7 @@ public class EnemyShoot: MonoBehaviour
     {
         Bullet bullet = bulletPool.GetBullet();
         bullet.gameObject.layer = LayerMask.NameToLayer(LAYER_NAME);
-        bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, Bullet.BulletType.Enemy);
+        bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, BulletType.Enemy);
         _audioService.PlayShootSound();
     }
 }

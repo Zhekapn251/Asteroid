@@ -8,6 +8,7 @@ namespace Services
     public interface IGameSaveService
     {
         event Action OnGameSave;
+        public const float AUTO_SAVE_INTERVAL = 20f;
         void BeginSave();
         void SaveGame();
         PlayerProgress LoadGame();

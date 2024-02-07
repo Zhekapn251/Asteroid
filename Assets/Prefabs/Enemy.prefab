@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af62894e7616492fb7487c01631c1498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 1.5
 --- !u!114 &1311718667321053815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletSpawnPoint: {fileID: 926440545186603527}
-  _shootingInterval: 1
+  _shootingInterval: 4
   _bulletSpeed: 8
 --- !u!114 &934130963398581435
 MonoBehaviour:

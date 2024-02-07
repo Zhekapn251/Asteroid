@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using System;
+using Entities;
 using Misc;
 using Services;
 using UnityEngine;
@@ -6,8 +7,9 @@ using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
-    private const int HIT_SCORE = 10;
     [SerializeField] private Sprite[] _sprites;
+    [NonSerialized] public Coroutine returnToPoolCoroutine;
+    private const int HIT_SCORE = 10;
 
     private IPlayerProgressService _playerProgressService;
 
@@ -71,7 +73,7 @@ public class Enemy : MonoBehaviour
 
     private void Death_OnRevive()
     {
-        _enemyPool.ReturnEnemy(this);
+       _enemyPool.ReturnEnemy(this);
     }
 
     private void Death_OnDie()
@@ -80,7 +82,7 @@ public class Enemy : MonoBehaviour
         _playerProgressService.AddScore(HIT_SCORE);
         if (_enemySpawner != null)
         {
-            _enemySpawner.RemoveEnemy(this);
+            _enemySpawner.RemoveEnemyFromList(this);
         }
     }
 }

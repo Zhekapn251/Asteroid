@@ -41,7 +41,7 @@ namespace Player
         {
             Bullet bullet = _bulletPool.GetBullet();
             bullet.gameObject.layer = LayerMask.NameToLayer(LAYER_NAME); 
-            bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, Bullet.BulletType.Player);
+            bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, BulletType.Player);
             _audioService.PlayShootSound();
         }
 

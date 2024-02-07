@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: LevelSettings3
   m_EditorClassIdentifier: 
   levelNumber: 3
-  enemySpawnRate: 1
-  asteroidSpawnRate: 0.75
+  enemySpawnRate: 2
+  asteroidSpawnRate: 3
   enemiesToDestroy: 12
   asteroidsToDestroy: 17
   scoreToGet3Stars: 350

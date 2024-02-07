@@ -17,8 +17,7 @@ public class AsteroidPool : MonoBehaviour
 
     private float timeToCrossScreen;
     private float currentAsteroidSpeed;
-
-    float screenHeightInUnits;
+    private float screenHeightInUnits;
     
 
 
@@ -59,7 +58,14 @@ public class AsteroidPool : MonoBehaviour
     
     private void OnAsteroidRelease(Asteroid asteroid)
     {
+        DisableAutoreturnAsteroidIntoPool(asteroid);
+        Debug.Log("Asteroid released"); 
         asteroid.gameObject.SetActive(false);
+    }
+
+    private void DisableAutoreturnAsteroidIntoPool(Asteroid asteroid)
+    {
+        _coroutineService.StopGameCoroutine(asteroid.returnToPoolCoroutine);
     }
 
     private void OnAsteroidGet(Asteroid asteroid)
@@ -67,7 +73,12 @@ public class AsteroidPool : MonoBehaviour
         asteroid.gameObject.SetActive(true);
         currentAsteroidSpeed = asteroid.AsteroidSpeed;
         CalculateAndSetTimeToCrossScreen();
-        _coroutineService.StartGameCoroutine(ReturnInPool(asteroid));
+        EnableAutoreturnAsteroidIntoPool(asteroid);
+    }
+
+    private void EnableAutoreturnAsteroidIntoPool(Asteroid asteroid)
+    {
+        asteroid.returnToPoolCoroutine = _coroutineService.StartGameCoroutine(ReturnInPool(asteroid));
     }
 
     private void CalculateAndSetTimeToCrossScreen()
@@ -76,7 +87,6 @@ public class AsteroidPool : MonoBehaviour
         timeToCrossScreen = screenHeightInUnits / currentAsteroidSpeed;
         timeToCrossScreen += timeToCrossScreen * ADDITIVE_TIME_COEFFICIENT;
     }
-    
 
     private IEnumerator ReturnInPool(Asteroid asteroid)
     {

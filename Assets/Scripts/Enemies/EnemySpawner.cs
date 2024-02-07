@@ -41,10 +41,9 @@ public class EnemySpawner : MonoBehaviour
         _gameSaveService.OnGameSave -= SaveEnemiesData;
     }
 
-    public void RemoveEnemy(Enemy enemy)
+    public void RemoveEnemyFromList(Enemy enemy)
     {
         _enemies.Remove(enemy);
-        enemyPool.ReturnEnemy(enemy);
     }
 
     private void StartEndlessEnemySpawning()

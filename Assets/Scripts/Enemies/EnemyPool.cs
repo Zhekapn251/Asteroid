@@ -35,18 +35,20 @@ public class EnemyPool : MonoBehaviour
 
     public void ReturnEnemy(Enemy enemy)
     {
+        _coroutineService.StopGameCoroutine(enemy.returnToPoolCoroutine);
         pool.Release(enemy);
     }
 
     private void OnEnemyRelease(Enemy enemy)
     {
+
         enemy.gameObject.SetActive(false);
     }
 
     private void OnEnemyGet(Enemy enemy)
     {
         enemy.gameObject.SetActive(true);
-        _coroutineService.StartGameCoroutine(ReturnInPool(enemy));
+        enemy.returnToPoolCoroutine = _coroutineService.StartGameCoroutine(ReturnInPool(enemy));
     }
 
     private IEnumerator ReturnInPool(Enemy enemy)

@@ -1,3 +1,4 @@
+using System;
 using Entities;
 using Misc;
 using Services;
@@ -10,6 +11,7 @@ public class Asteroid : MonoBehaviour
     [SerializeField] private Sprite[] _sprites;
     [SerializeField] private int damage = 1;
     public float AsteroidSpeed => _asteroidMovement.speed;
+    [NonSerialized] public Coroutine returnToPoolCoroutine;
     private SpriteRenderer _spriteRenderer;
     private CapsuleCollider2D _capsuleCollider2D;
     private AsteroidPool _asteroidPool;
@@ -45,17 +47,13 @@ public class Asteroid : MonoBehaviour
 
         if (_capsuleCollider2D != null)
             Destroy(_capsuleCollider2D);
-
-        AddCapsuleCollider();
     }
 
     public void InitializeAsteroidSpawner(AsteroidSpawner asteroidSpawner)
     {
         _asteroidSpawner = asteroidSpawner;
     }
-
-    public AsteroidPool GetAsteroidPool() =>
-        _asteroidPool;
+    
 
     public AsteroidData GetAsteroidData() =>
         new AsteroidData(transform.position, _health.currentHealth, spriteIndex);
@@ -75,13 +73,7 @@ public class Asteroid : MonoBehaviour
             damageable.TakeDamage(damage);
         }
     }
-
-    private void AddCapsuleCollider()
-    {
-        _capsuleCollider2D = gameObject.AddComponent<CapsuleCollider2D>();
-        _capsuleCollider2D.isTrigger = true;
-    }
-
+    
     private void EnableSprite(bool enable) =>
         _spriteRenderer.enabled = enable;
 
@@ -99,7 +91,7 @@ public class Asteroid : MonoBehaviour
         _playerProgressService.AddScore(HIT_SCORE);
         if (_asteroidSpawner != null)
         {
-            _asteroidSpawner.RemoveAsteroid(this);
+            _asteroidSpawner.RemoveAsteroidFromList(this);
         }
     }
 }

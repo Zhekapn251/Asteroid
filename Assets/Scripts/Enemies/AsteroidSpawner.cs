@@ -34,21 +34,20 @@ public class AsteroidSpawner: MonoBehaviour
         StartEndlessAsteroidSpawning();
     }
 
-    private void StartEndlessAsteroidSpawning()
-    {
-        _coroutineService.StartGameCoroutine(SpawnerRoutine());
-    }
-
-    public void RemoveAsteroid(Asteroid asteroid)
-    {
-        _asteroids.Remove(asteroid);
-        asteroidPool.ReturnAsteroid(asteroid);
-    }
-
     private void OnDestroy()
     {
         _levelSettingsService.OnLevelSettingsChanged -= SetSpawnRate;
         _gameSaveService.OnGameSave -= SaveAsteroidsData;
+    }
+
+    public void RemoveAsteroidFromList(Asteroid asteroid)
+    {
+        _asteroids.Remove(asteroid);
+    }
+
+    private void StartEndlessAsteroidSpawning()
+    {
+        _coroutineService.StartGameCoroutine(SpawnerRoutine());
     }
 
     private void InitializeAsteroidPool()

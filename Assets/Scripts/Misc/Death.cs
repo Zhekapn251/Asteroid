@@ -20,6 +20,7 @@ namespace Misc
             _collider2D = GetComponent<Collider2D>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _audioService = ServiceLocator.Get<IAudioService>();
+            
         }
 
         public void Die()
@@ -27,7 +28,16 @@ namespace Misc
             EnableSpriteRendererAndCollider(false);
             OnDie?.Invoke();
             DeathEffect();
-            Invoke(nameof(Revive), 1f);
+            
+            var totalTime = GetVFXFullDuration();
+            Invoke(nameof(Revive), totalTime);
+        }
+
+        private float GetVFXFullDuration()
+        {
+            var mainModule = _deathVFX.main;
+            float totalTime = mainModule.duration + mainModule.startLifetime.constantMax;
+            return totalTime;
         }
 
         private void Revive()

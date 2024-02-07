@@ -1,4 +1,6 @@
+using System.Collections;
 using Services;
+using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -6,6 +8,7 @@ namespace Misc
 {
     public class Bullet : MonoBehaviour
     {
+        private const float COOLDOWN_DELAY = 0.5f;
         [SerializeField] private float _maxLifetime = 2f;
         [SerializeField] private int _damage = 5;
     
@@ -16,6 +19,7 @@ namespace Misc
     
         private IGameStateService _gameStateService;
         private ICoroutineService _coroutineService;
+        private Coroutine _returnToPoolCoroutine;
         private float _bulletSpeed;
 
         private void Awake()
@@ -26,7 +30,17 @@ namespace Misc
         }
 
         private void OnEnable() =>
-            _coroutineService.ExecuteAfterDelay(_maxLifetime, ReturnToPool);
+            EnableAutoreturnBulletIntoPool();
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            Collider2D col = GetComponent<Collider2D>();
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            damageable?.TakeDamage(_damage);
+            DisableAutoreturnBulletIntoPool();
+            ReturnToPool();
+
+        }
 
         public void SetPool(ObjectPool<Bullet> pool)
         {
@@ -55,23 +69,19 @@ namespace Misc
             transform.Translate(movementDirection * _bulletSpeed * Time.deltaTime, Space.Self);
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void DisableAutoreturnBulletIntoPool()
         {
-            IDamageable damageable = other.GetComponent<IDamageable>();
-            damageable?.TakeDamage(_damage);
+            _coroutineService.StopGameCoroutine(_returnToPoolCoroutine);
+        }
 
-            ReturnToPool();
+        private void EnableAutoreturnBulletIntoPool()
+        {
+            _returnToPoolCoroutine = _coroutineService.ExecuteAfterDelay(_maxLifetime, ReturnToPool);
         }
 
         private void ReturnToPool()
         {
             _pool.Release(this);
-        }
-
-        public enum BulletType
-        {
-            Player,
-            Enemy
         }
     }
 }

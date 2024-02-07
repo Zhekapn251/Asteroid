@@ -61,7 +61,7 @@ namespace Player
             UpdateHealth();
         }
 
-        public override void HitEffect()
+        protected override void HitEffect()
         {
             _spriteRenderer.color = _hitColor;
             UpdateHealth();

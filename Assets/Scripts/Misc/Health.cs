@@ -13,12 +13,18 @@ namespace Misc
         
         [NonSerialized] public int currentHealth;
         [NonSerialized] public Death _death;
-        
-        void Start()
+
+        private void OnEnable()
         {
             currentHealth = _maxHealth;
+        }
+
+
+        void Start()  
+        {
+            
             _audioService = ServiceLocator.Get<IAudioService>();
-            _death = GetComponent<Death>();
+            _death = GetComponent<Death>();   
         }
         public virtual void TakeDamage(int damage)
         {
@@ -31,7 +37,7 @@ namespace Misc
             }
         }
 
-        public virtual void HitEffect()
+        protected virtual void HitEffect()
         {
             _damageEffect.Play();
             _audioService.PlayHitSound();

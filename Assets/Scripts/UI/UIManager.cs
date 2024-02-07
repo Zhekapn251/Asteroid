@@ -30,8 +30,6 @@ namespace UI
         [SerializeField] 
         private Button _pauseButton;
         [SerializeField] 
-        private Button _restartButton;
-        [SerializeField] 
         private Button _settingsButton;
     
     
@@ -47,7 +45,6 @@ namespace UI
         {
             _pauseButton.onClick.AddListener(() => ShowPauseMenu(true));
             _settingsButton.onClick.AddListener(() => ShowSettingsScreen(true));
-            _restartButton.onClick.AddListener(OnRestartButtonClicked);
 
             _uiUpdateService = ServiceLocator.Get<IUiUpdateService>();
             _gameStateService = ServiceLocator.Get<IGameStateService>();
@@ -91,11 +88,6 @@ namespace UI
             Update3StarsText(levelGoals.ScoreToGet3Stars);
         }
         
-
-        private void OnRestartButtonClicked()
-        {
-            _gameStateService.GameReload();
-        }
 
         private void UpdateLevel(int obj)
         {

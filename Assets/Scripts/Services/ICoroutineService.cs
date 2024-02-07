@@ -8,5 +8,6 @@ namespace Services
     {
         Coroutine ExecuteAfterDelay(float maxLifetime, Action returnToPool);
         Coroutine StartGameCoroutine(IEnumerator coroutine);
+        void StopGameCoroutine(Coroutine coroutine);
     }
 }

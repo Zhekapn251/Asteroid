@@ -6,7 +6,6 @@ namespace Misc
 {
     public class LevelManager : MonoBehaviour
     {
-        private const float AUTO_SAVE_INTERVAL = 10f;
         [SerializeField] private LevelSettings[] _levels;
 
         private IPlayerProgressService _playerProgressService;
@@ -101,7 +100,7 @@ namespace Misc
 
         private IEnumerator SaveRoutine()
         {
-            yield return new WaitForSeconds(AUTO_SAVE_INTERVAL);
+            yield return new WaitForSeconds(IGameSaveService.AUTO_SAVE_INTERVAL);
             Debug.Log("SaveRoutine started");
             _gameSaveService.BeginSave();
             _gameSaveService.SaveGame();
