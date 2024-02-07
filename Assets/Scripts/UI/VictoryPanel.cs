@@ -28,8 +28,6 @@ namespace UI
         {
             InitializeServices();
             InitializeButtons();
-            ResetStars();
-            gameObject.SetActive(false);
         }
 
         private void InitializeServices()
@@ -63,7 +61,7 @@ namespace UI
         {
             starsCount = 0;
             int currentScore = _playerProgressService.CurrentScore;
-            int maxScore = _levelSettingsService.GetLevelSettings().ScoreToWin;
+            int maxScore = _levelSettingsService.GetLevelSettings().ScoreToGet3Stars;
             if (currentScore >= maxScore)
             {
                 starsCount = 3;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Misc;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Services
@@ -20,6 +21,9 @@ namespace Services
 
             IGameStateService gameStateService = FindObjectOfType<GameStateService>();
             ServiceLocator.Register<IGameStateService>(gameStateService);
+
+            ICoroutineService coroutineService = FindObjectOfType<CoroutineService>();
+            ServiceLocator.Register<ICoroutineService>(coroutineService);
         
             ISettingsService settingsService = new PlayerPrefsSettingsService(saveService);
             ServiceLocator.Register<ISettingsService>(settingsService);

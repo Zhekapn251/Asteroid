@@ -16,7 +16,7 @@ namespace Misc
         [SerializeField]
         private int asteroidsToDestroy;
         [SerializeField] 
-        private int _scoreToWin;
+        private int scoreToGet3Stars;
     
     
         public int LevelNumber => levelNumber;
@@ -25,6 +25,6 @@ namespace Misc
         public int EnemiesToDestroy => enemiesToDestroy;
         public int AsteroidsToDestroy => asteroidsToDestroy;
     
-        public int ScoreToWin => _scoreToWin;
+        public int ScoreToGet3Stars => scoreToGet3Stars;
     }
 }

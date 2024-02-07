@@ -12,7 +12,7 @@ namespace Misc
         private IAudioService _audioService;
         
         [NonSerialized] public int currentHealth;
-        [NonSerialized]  public Death _death;
+        [NonSerialized] public Death _death;
         
         void Start()
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Entities;
 using Services;
@@ -8,10 +7,10 @@ using Random = UnityEngine.Random;
 
 public class AsteroidSpawner: MonoBehaviour
 {
-    [SerializeField] private Vector2 _spawnRangeY = new Vector2(5f, 10f);
-    [SerializeField] private Vector2 _spawnRangeX = new Vector2(-10f, 10f);
+    private Vector2 _spawnRangeX = new Vector2(-3, 3);
+    private Vector2 _spawnRangeY = new Vector2(5, 6);
 
-    private float _spawnRate = 1;
+    private float _spawnRate;
     
     private AsteroidPool asteroidPool;
     private List<Asteroid> _asteroids = new List<Asteroid>();
@@ -20,22 +19,30 @@ public class AsteroidSpawner: MonoBehaviour
     private ILevelSettingsService _levelSettingsService;
     private IGameStateService _gameStateService;
     private IGameSaveService _gameSaveService;
-  
-    private void Start()
+    private ICoroutineService _coroutineService;
+
+    private void Start()    
     {
+        _coroutineService = ServiceLocator.Get<ICoroutineService>();
         asteroidPool = FindObjectOfType<AsteroidPool>();
         InitializeServices();
         _levelSettingsService.OnLevelSettingsChanged += SetSpawnRate;
-        _gameSaveService.OnGameSave += GameSaveServiceOnGameSave;
+        _gameSaveService.OnGameSave += SaveAsteroidsData;
         SetSpawnRate();
         SpawnLoadEnemies();
-        StartCoroutine(SpawnerRoutine());
+        _coroutineService.StartGameCoroutine(SpawnerRoutine());
     }
 
     private void OnDestroy()
     {
         _levelSettingsService.OnLevelSettingsChanged -= SetSpawnRate;
-        _gameSaveService.OnGameSave -= GameSaveServiceOnGameSave;
+        _gameSaveService.OnGameSave -= SaveAsteroidsData;
+    }
+
+    public void RemoveAsteroid(Asteroid asteroid)
+    {
+        _asteroids.Remove(asteroid);
+        asteroidPool.ReturnAsteroid(asteroid);
     }
 
     private void SpawnLoadEnemies()
@@ -48,7 +55,8 @@ public class AsteroidSpawner: MonoBehaviour
             _asteroids.Add(asteroid);
         }
     }
-    private void GameSaveServiceOnGameSave()
+
+    private void SaveAsteroidsData()
     {
         _asteroidsData = new List<AsteroidData>();
         foreach (var asteroid in _asteroids)
@@ -77,7 +85,6 @@ public class AsteroidSpawner: MonoBehaviour
             yield return new WaitForSeconds(_spawnRate);
             if(_gameStateService.CurrentGameState == GameState.Playing)
                 SpawnAsteroid();
-            
         }
     }
 
@@ -94,10 +101,5 @@ public class AsteroidSpawner: MonoBehaviour
 
         asteroid.transform.position = spawnPosition;
         _asteroids.Add(asteroid);
-    }
-
-    public void RemoveAsteroid(Asteroid asteroid)
-    {
-        _asteroids.Remove(asteroid);
     }
 }

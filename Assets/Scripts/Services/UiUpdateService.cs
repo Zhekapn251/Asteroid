@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Services
 {
@@ -6,6 +7,8 @@ namespace Services
     {
         public event Action<float> OnHealthChanged;
         public event Action<int> OnScoreChanged;
+        public event Action<int> OnGoalsDestroyShipsChanged;
+        public event Action<int> OnGoalsDestroyAsteroidChanged;
         public event Action<int> OnLevelChanged;
         public event Action OnDeath;
         public event Action OnWin;
@@ -25,6 +28,16 @@ namespace Services
             OnLevelChanged?.Invoke(level);
         }
 
+        public void GoalsDestroyShipsChanged(int ships)
+        {
+            OnGoalsDestroyShipsChanged?.Invoke(ships);
+        }
+
+        public void GoalsDestroyAsteroidChanged(int asteroid)
+        {
+            OnGoalsDestroyAsteroidChanged?.Invoke(asteroid);
+        }
+
         public void Death()
         {
             OnDeath?.Invoke();
@@ -34,6 +47,6 @@ namespace Services
         {
             OnWin?.Invoke();
         }
-        
+
     }
 }

@@ -5,7 +5,7 @@ namespace Player
 {
     public class PlayerMovement : MonoBehaviour
     {
-        [SerializeField] private float speed = 5f;
+        [SerializeField] private float speed = 15f;
     
         private IGameStateService _gameStateService;
         private IGameSaveService _gameSaveService;

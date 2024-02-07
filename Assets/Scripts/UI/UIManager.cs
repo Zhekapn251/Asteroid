@@ -1,3 +1,4 @@
+using System;
 using Services;
 using TMPro;
 using UnityEngine;
@@ -7,10 +8,13 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _scoreText;
-        [SerializeField] private TextMeshProUGUI _levelText;
+        [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private TextMeshProUGUI levelText;
+        [SerializeField] private TextMeshProUGUI goalsShipText;
+        [SerializeField] private TextMeshProUGUI goalsAsteroidText;
+        [SerializeField] private TextMeshProUGUI get3StarsText;
 
-        [SerializeField] private Slider _healthSlider;
+        [SerializeField] private Slider healthSlider;
     
         [Header("Panels")]
         [SerializeField] 
@@ -33,6 +37,7 @@ namespace UI
     
         private IUiUpdateService _uiUpdateService;
         private IGameStateService _gameStateService;
+        private ILevelSettingsService _levelSettingsService;
     
         private Image _sliderFill;
     
@@ -41,22 +46,51 @@ namespace UI
         private void Awake()
         {
             _pauseButton.onClick.AddListener(() => ShowPauseMenu(true));
-            _settingsButton.onClick.AddListener(() => _settingsScreen.SetActive(true));
+            _settingsButton.onClick.AddListener(() => ShowSettingsScreen(true));
             _restartButton.onClick.AddListener(OnRestartButtonClicked);
 
             _uiUpdateService = ServiceLocator.Get<IUiUpdateService>();
             _gameStateService = ServiceLocator.Get<IGameStateService>();
-            _healthSlider.gameObject.SetActive(false);
+            _levelSettingsService = ServiceLocator.Get<ILevelSettingsService>();
+            healthSlider.gameObject.SetActive(false);
         
             _uiUpdateService.OnHealthChanged += SetHealth;
             _uiUpdateService.OnScoreChanged += UpdateScore;
+            _uiUpdateService.OnGoalsDestroyAsteroidChanged += UpdateAsteroidsGoals;
+            _uiUpdateService.OnGoalsDestroyShipsChanged += UpdateShipsGoals;
             _uiUpdateService.OnDeath += () => ShowGameOverScreen(true);
-            _uiUpdateService.OnWin += () => _winScreen.SetActive(true);
+            _uiUpdateService.OnWin += () => ShowWinGameScreen(true);
             _uiUpdateService.OnLevelChanged += UpdateLevel;
+            _levelSettingsService.OnLevelSettingsChanged += UpdateLevelsGoals;
         
-            _sliderFill = _healthSlider.fillRect.GetComponent<Image>();
+            _sliderFill = healthSlider.fillRect.GetComponent<Image>();
         
         }
+
+        private void UpdateShipsGoals(int number)
+        {
+            goalsShipText.text = number.ToString();
+        }
+
+        private void UpdateAsteroidsGoals(int number)
+        {
+            goalsAsteroidText.text = number.ToString();
+        }
+
+        private void Update3StarsText(int number)
+        {
+            get3StarsText.text = $"Score {number} points to get 3 stars";
+        }
+        private void UpdateLevelsGoals()
+        {
+            
+            var levelGoals = _levelSettingsService.GetLevelSettings();
+            
+            UpdateShipsGoals(levelGoals.EnemiesToDestroy);
+            UpdateAsteroidsGoals(levelGoals.AsteroidsToDestroy);
+            Update3StarsText(levelGoals.ScoreToGet3Stars);
+        }
+        
 
         private void OnRestartButtonClicked()
         {
@@ -65,18 +99,18 @@ namespace UI
 
         private void UpdateLevel(int obj)
         {
-            _levelText.text = obj.ToString();
+            levelText.text = obj.ToString();
         }
 
         private void UpdateScore(int score)
         {
-            _scoreText.text = "Score: " + score.ToString();
+            scoreText.text = "Score: " + score.ToString();
         }
 
         private void SetHealth(float health)
         {
-            _healthSlider.gameObject.SetActive(true);
-            _healthSlider.value = health;
+            healthSlider.gameObject.SetActive(true);
+            healthSlider.value = health;
             _sliderFill.color = Color.Lerp(Color.red, Color.green, health);
         }
 
@@ -88,6 +122,16 @@ namespace UI
         private void ShowGameOverScreen(bool show)
         {
             _gameOverScreen.SetActive(show);
+        }
+
+        private void ShowWinGameScreen(bool show)
+        {
+            _winScreen.SetActive(show);
+        }
+
+        private void ShowSettingsScreen(bool show)
+        {
+            _settingsScreen.SetActive(show);
         }
     }
 }

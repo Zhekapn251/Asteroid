@@ -9,7 +9,7 @@ namespace Services
 
         void AddScore(int score);
         void OnAsteroidDestroyed();
-        void EnemyDestroyed();
+        void OnEnemyDestroyed();
         bool IsLevelComplete();
         void ResetProgress();
         void ResetScore();

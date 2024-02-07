@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Services
 {
@@ -17,10 +18,35 @@ namespace Services
         }
 
         public event Action OnWin;
+
+        private int AsteroidsDestroyed
+        {
+            get => _asteroidsDestroyed;
+            set
+            {
+                _asteroidsDestroyed = value;
+                OnAsteroidValueChanged();
+            }
+        }
+
+        private int EnemiesDestroyed
+        {
+            get => _enemiesDestroyed;
+            set
+            {
+                _enemiesDestroyed = value;
+                OnEnemyValueChanged();
+            }
+        }
+
         private int _currentScore;
+
         private int _currentLevel;
+
         private int _asteroidsDestroyed;
+
         private int _enemiesDestroyed;
+
 
         public void AddScore(int score)
         {
@@ -31,11 +57,15 @@ namespace Services
         private void UpdateScore() => 
             _uiUpdateService.ScoreChanged(_currentScore);
 
-        public void OnAsteroidDestroyed() => 
-            _asteroidsDestroyed++;
+        public void OnAsteroidDestroyed()
+        {
+            AsteroidsDestroyed++;
+        }
 
-        public void EnemyDestroyed() => 
-            _enemiesDestroyed++;
+        public void OnEnemyDestroyed()
+        {
+            EnemiesDestroyed++;
+        }
 
         public void LoadProgress()
         {
@@ -84,5 +114,42 @@ namespace Services
             _levelSettingsService.GetLevelSettings().AsteroidsToDestroy &&
             _enemiesDestroyed >= 
             _levelSettingsService.GetLevelSettings().EnemiesToDestroy;
+
+        private void OnEnemyValueChanged()
+        {
+            if (UpdateEnemiesGoals()) return;
+            IsLevelComplete();
+        }
+
+        private void OnAsteroidValueChanged()
+        {
+            UpdateAsteroidsGoals();
+            IsLevelComplete();
+        }
+
+        private void UpdateAsteroidsGoals()
+        {
+            var asteroidsToDestroy = _levelSettingsService.GetLevelSettings().AsteroidsToDestroy;
+            if (_asteroidsDestroyed > asteroidsToDestroy)
+            {
+                return;
+            }
+
+            var restAsteroidsToDestroyed = asteroidsToDestroy - _asteroidsDestroyed;
+            _uiUpdateService.GoalsDestroyAsteroidChanged(restAsteroidsToDestroyed);
+        }
+
+        private bool UpdateEnemiesGoals()
+        {
+            var enemiesToDestroy = _levelSettingsService.GetLevelSettings().EnemiesToDestroy;
+            if (_enemiesDestroyed > enemiesToDestroy)
+            {
+                return true;
+            }
+
+            var restEnemiesToDestroyed = enemiesToDestroy - _enemiesDestroyed;
+            _uiUpdateService.GoalsDestroyShipsChanged(restEnemiesToDestroyed);
+            return false;
+        }
     }
 }

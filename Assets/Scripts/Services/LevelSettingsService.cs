@@ -1,5 +1,6 @@
 ﻿using System;
 using Misc;
+using UnityEngine;
 
 namespace Services
 {
@@ -7,8 +8,7 @@ namespace Services
     {
         public event Action OnLevelSettingsChanged;
         private LevelSettings _levelSettings;
-
-
+        
         public void SetLevelSettings(LevelSettings levelSettings)
         {
             _levelSettings = levelSettings;

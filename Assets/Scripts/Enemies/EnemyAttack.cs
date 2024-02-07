@@ -5,8 +5,11 @@ public class EnemyAttack: MonoBehaviour
 {
     [SerializeField] private int _damage = 10;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        collision.gameObject.GetComponent<IDamageable>()?.TakeDamage(_damage);
+        if (col.gameObject.TryGetComponent(out IDamageable damageable))
+        {
+            damageable.TakeDamage(_damage);
+        }
     }
 }

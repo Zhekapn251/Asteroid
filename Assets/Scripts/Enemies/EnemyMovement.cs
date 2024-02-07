@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private float _speed = 3.0f;
-    [SerializeField] private Vector3 _movementDirection = Vector3.down;
+    private readonly Vector3 _direction = Vector3.down;
+    public float speed = 1.0f;
     
     private IGameStateService gameStateService;
     
@@ -13,10 +13,15 @@ public class EnemyMovement : MonoBehaviour
         gameStateService = ServiceLocator.Get<IGameStateService>();
     }
 
-    void Update()
+    private void Update()
     {
         if(gameStateService.CurrentGameState != GameState.Playing)
             return;
-        transform.Translate(_movementDirection.normalized * _speed * Time.deltaTime);
+        Move();
+    }
+    
+    private void Move()
+    {
+        transform.Translate(_direction * speed * Time.deltaTime);
     }
 }

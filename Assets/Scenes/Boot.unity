@@ -533,6 +533,21 @@ MonoBehaviour:
   _enemyExplosionSounds:
   - {fileID: 8300000, guid: 9469ff11d360dd144967e0425c1902fe, type: 3}
   - {fileID: 8300000, guid: 2c76f2e1e08e000429094878468d330b, type: 3}
+--- !u!4 &4536826887426104123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6351633579921070903}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -3.7199998, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4546376915481191192
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,6 +693,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4095085684879560245}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5274272811128014951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6351633579921070903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 062dcaee5580471894ad5db8cfeffbb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &6351633579921070903
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4536826887426104123}
+  - component: {fileID: 5274272811128014951}
+  m_Layer: 0
+  m_Name: CoroutineServise
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &6954785373640883563
 Transform:
   m_ObjectHideFlags: 0
@@ -719,3 +763,4 @@ SceneRoots:
   - {fileID: 4095085684879560245}
   - {fileID: 1390285796}
   - {fileID: 1955242060}
+  - {fileID: 4536826887426104123}

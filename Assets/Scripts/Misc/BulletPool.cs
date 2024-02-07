@@ -5,11 +5,10 @@ namespace Misc
 {
     public class BulletPool : MonoBehaviour
     {
-
         [SerializeField] private Bullet _bulletPrefab;
-        [SerializeField] private int _poolSize = 40;
-    
+        private int _poolSize = 100;
         private ObjectPool<Bullet> _bulletPool;
+        private const int MAX_POOL_SIZE = 150;
 
 
         private void Awake()
@@ -21,31 +20,32 @@ namespace Misc
                 actionOnDestroy: OnDestroyBullet,
                 collectionCheck: false,
                 defaultCapacity: _poolSize,
-                maxSize: _poolSize + 20
+                maxSize: MAX_POOL_SIZE
             );
         }
 
         private Bullet CreateBullet()
         {
-            Bullet bullet = Instantiate(_bulletPrefab);
+            Bullet bullet = Instantiate(_bulletPrefab, gameObject.transform, true);
             bullet.SetPool(_bulletPool);
             bullet.gameObject.SetActive(false);
             return bullet;
         }
 
-        private void OnGetBullet(Bullet bullet) => 
+        private void OnGetBullet(Bullet bullet) =>
             bullet.gameObject.SetActive(true);
 
-        private void OnReleaseBullet(Bullet bullet) => 
+        private void OnReleaseBullet(Bullet bullet) =>
             bullet.gameObject.SetActive(false);
 
         private void OnDestroyBullet(Bullet bullet) => 
             Destroy(bullet.gameObject);
 
-        public Bullet GetBullet() => 
+
+        public Bullet GetBullet() =>
             _bulletPool.Get();
 
-        public void ReturnBullet(Bullet bullet) => 
+        public void ReturnBullet(Bullet bullet) =>
             _bulletPool.Release(bullet);
     }
 }

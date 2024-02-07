@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class EnemyShoot: MonoBehaviour
 {
+    private const string LAYER_NAME = "EnemyBullet";
     [SerializeField] private Transform _bulletSpawnPoint;
-    [SerializeField] private float _shootingInterval = 2.0f;
-    [SerializeField] float _bulletSpeed = 10f;
+    [SerializeField] private float _shootingInterval = 10f;
+    [SerializeField] float _bulletSpeed = 8f;
     private float lastShootTime;
     private BulletPool bulletPool; 
     private IGameStateService gameStateService;
@@ -32,14 +33,9 @@ public class EnemyShoot: MonoBehaviour
 
     void Shoot()
     {
-        
         Bullet bullet = bulletPool.GetBullet();
-        bullet.gameObject.layer = LayerMask.NameToLayer("EnemyBullet");
+        bullet.gameObject.layer = LayerMask.NameToLayer(LAYER_NAME);
         bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, Bullet.BulletType.Enemy);
-
-        bullet.transform.position = _bulletSpawnPoint.position;
-        bullet.transform.rotation = _bulletSpawnPoint.rotation;
         _audioService.PlayShootSound();
-        
     }
 }

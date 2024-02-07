@@ -17,4 +17,4 @@ MonoBehaviour:
   asteroidSpawnRate: 0.5
   enemiesToDestroy: 20
   asteroidsToDestroy: 25
-  _scoreToWin: 250
+  scoreToGet3Stars: 700

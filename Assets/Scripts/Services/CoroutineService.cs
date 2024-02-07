@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
+using Services;
 using UnityEngine;
 
 namespace Misc
 {
-    public class CoroutineService : MonoBehaviour
+    public class CoroutineService : MonoBehaviour, ICoroutineService
     {
         public static CoroutineService Instance { get; private set; }
 

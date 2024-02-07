@@ -15,17 +15,23 @@ namespace Misc
         private SpriteRenderer _spriteRenderer;
     
         private IGameStateService _gameStateService;
-    
+        private ICoroutineService _coroutineService;
         private float _bulletSpeed;
 
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _gameStateService = ServiceLocator.Get<IGameStateService>();
+            _coroutineService = ServiceLocator.Get<ICoroutineService>();
         }
 
         private void OnEnable() =>
-            CoroutineService.Instance.ExecuteAfterDelay(_maxLifetime, ReturnToPool);
+            _coroutineService.ExecuteAfterDelay(_maxLifetime, ReturnToPool);
+
+        public void SetPool(ObjectPool<Bullet> pool)
+        {
+            this._pool = pool; 
+        }
 
         public void Initialize(Transform bulletSpawnPoint, float bulletSpeed, BulletType bulletType)
         {
@@ -49,11 +55,6 @@ namespace Misc
             transform.Translate(movementDirection * _bulletSpeed * Time.deltaTime, Space.Self);
         }
 
-        public void SetPool(ObjectPool<Bullet> pool)
-        {
-            this._pool = pool; 
-        }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
             IDamageable damageable = other.GetComponent<IDamageable>();
@@ -62,7 +63,7 @@ namespace Misc
             ReturnToPool();
         }
 
-        public void ReturnToPool()
+        private void ReturnToPool()
         {
             _pool.Release(this);
         }

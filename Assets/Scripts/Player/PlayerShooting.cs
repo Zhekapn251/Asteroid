@@ -6,6 +6,7 @@ namespace Player
 {
     public class PlayerShooting : MonoBehaviour
     {
+        private const string LAYER_NAME = "Bullet";
         [SerializeField] private Transform _bulletSpawnPoint;
         [SerializeField] private float _bulletSpeed = 10f;
         [SerializeField] private float _shootingInterval = 0.1f;
@@ -39,7 +40,7 @@ namespace Player
         private void Shoot()
         {
             Bullet bullet = _bulletPool.GetBullet();
-            bullet.gameObject.layer = LayerMask.NameToLayer("Bullet"); 
+            bullet.gameObject.layer = LayerMask.NameToLayer(LAYER_NAME); 
             bullet.Initialize(_bulletSpawnPoint, _bulletSpeed, Bullet.BulletType.Player);
             _audioService.PlayShootSound();
         }

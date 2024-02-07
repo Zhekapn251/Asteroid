@@ -8,37 +8,39 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private Vector2 _spawnRangeX = new Vector2(-10f, 10f);
-    [SerializeField] private Vector2 _spawnRangeY = new Vector2(5f, 10f);
+    private Vector2 _spawnRangeX = new Vector2(-3, 3);
+    private Vector2 _spawnRangeY = new Vector2(5, 6);
 
     private ILevelSettingsService _levelSettingsService;
     private IGameStateService _gameStateService;
     private IGameSaveService _gameSaveService;
+    private ICoroutineService _coroutineService;
 
     private EnemyPool enemyPool;
     private List<EnemyData> _enemiesData;
     private List<Enemy> _enemies = new List<Enemy>();
 
-    private float _spawnRate = 2f;
+    private float _spawnRate;
 
     private void Start()
     {
+        _coroutineService = ServiceLocator.Get<ICoroutineService>();
         enemyPool = GetComponent<EnemyPool>();
 
         _levelSettingsService = ServiceLocator.Get<ILevelSettingsService>();
         _gameStateService = ServiceLocator.Get<IGameStateService>();
         _gameSaveService = ServiceLocator.Get<IGameSaveService>();
         _levelSettingsService.OnLevelSettingsChanged += SetSpawnRate;
-        _gameSaveService.OnGameSave += GameSaveServiceOnGameSave;
+        _gameSaveService.OnGameSave += SaveEnemiesData;
         SetSpawnRate();
         SpawnLoadEnemies();
-        StartCoroutine(SpawnEnemyCoroutine());
+        _coroutineService.StartGameCoroutine(SpawnEnemyCoroutine());
     }
 
     private void OnDestroy()
     {
         _levelSettingsService.OnLevelSettingsChanged -= SetSpawnRate;
-        _gameSaveService.OnGameSave -= GameSaveServiceOnGameSave;
+        _gameSaveService.OnGameSave -= SaveEnemiesData;
     }
 
     private void SpawnLoadEnemies()
@@ -52,7 +54,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private void GameSaveServiceOnGameSave()
+    private void SaveEnemiesData()
     {
         _enemiesData = new List<EnemyData>();
         foreach (var enemy in _enemies)
@@ -89,10 +91,15 @@ public class EnemySpawner : MonoBehaviour
             0
         );
 
+        var enemyTransform = enemy.transform;
+        enemyTransform.position = spawnPosition;
+        enemyTransform.parent = gameObject.transform;
         _enemies.Add(enemy);
-        enemy.transform.position = spawnPosition;
     }
 
-    public void RemoveEnemy(Enemy enemy) =>
+    public void RemoveEnemy(Enemy enemy)
+    {
         _enemies.Remove(enemy);
+        enemyPool.ReturnEnemy(enemy);
+    }
 }

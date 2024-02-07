@@ -6,6 +6,7 @@ namespace Misc
 {
     public class LevelManager : MonoBehaviour
     {
+        private const float AUTO_SAVE_INTERVAL = 10f;
         [SerializeField] private LevelSettings[] _levels;
 
         private IPlayerProgressService _playerProgressService;
@@ -13,6 +14,7 @@ namespace Misc
         private IUiUpdateService _uiUpdateService;
         private IGameSaveService _gameSaveService;
         private ILevelSettingsService _levelSettingsService;
+        private ICoroutineService _coroutineService;
 
         private int _currentLevelIndex;
  
@@ -21,6 +23,7 @@ namespace Misc
 
         void Start()
         {
+            _coroutineService = ServiceLocator.Get<ICoroutineService>();
             InitializeServices();
        
             _playerProgressService.OnWin += PlayerProgressService_OnWin;
@@ -30,7 +33,7 @@ namespace Misc
 
             _currentLevelIndex = _gameSaveService.GetPlayerProgress().currentLevel;
             LoadLevel(_currentLevelIndex);
-            StartCoroutine(SaveRoutine());
+            _coroutineService.StartGameCoroutine(SaveRoutine());
         }
 
         private void OnDestroy()
@@ -72,8 +75,10 @@ namespace Misc
             LoadLevel(0, true);
         }
 
-        private void PlayerProgressService_OnWin() =>
+        private void PlayerProgressService_OnWin()
+        {
             _uiUpdateService.Win();
+        }
 
         private void LoadLevel(int levelIndex, bool isReload = false)
         {
@@ -96,8 +101,8 @@ namespace Misc
 
         private IEnumerator SaveRoutine()
         {
+            yield return new WaitForSeconds(AUTO_SAVE_INTERVAL);
             Debug.Log("SaveRoutine started");
-            yield return new WaitForSeconds(5f);
             _gameSaveService.BeginSave();
             _gameSaveService.SaveGame();
         }

@@ -27,8 +27,6 @@ namespace Services
 
         public void BeginSave()
         {
-            //_pendingSaves = 0;
-            //_isSaveRequested = false;
             OnGameSave?.Invoke();
         }
 
@@ -70,8 +68,7 @@ namespace Services
         {
             RegisterPendingSave();
             _playerProgress.asteroids = asteroidsData;
-            StartLongProcessAsync(1000);
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
 
@@ -79,53 +76,46 @@ namespace Services
         {
             RegisterPendingSave();
             _playerProgress.enemies = enemiesData;
-            StartLongProcessAsync(1500);    
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
         public void SetScore(int score)
         {
             RegisterPendingSave();
             _playerProgress.playerScore = score;
-            StartLongProcessAsync(2000);
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
         public void SetAsteroidsDestroyed(int asteroidsDestroyed)
         {
             RegisterPendingSave();
             _playerProgress.asteroidsDestroyed = asteroidsDestroyed;
-            StartLongProcessAsync(1000);
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
         public void SetEnemiesDestroyed(int enemiesDestroyed)
         {
             RegisterPendingSave();
             _playerProgress.enemiesDestroyed = enemiesDestroyed;
-            StartLongProcessAsync(3000);
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
         public void SetCurrentLevel(int level)
         {
             RegisterPendingSave();
             _playerProgress.currentLevel = level;
-            StartLongProcessAsync(2500);
-            //NotifySaveComplete();
+            NotifySaveComplete();
         }
 
         private void RegisterPendingSave()
         {
             _pendingSaves++;
-            Debug.LogWarning("RegisterPendingSave():: " + _pendingSaves);
         }
 
         private void NotifySaveComplete()
         {
             _pendingSaves--;
-            Debug.LogWarning("NotifySaveComplete():: " + _pendingSaves);
-
+            
             if (_pendingSaves == 0 && _isSaveRequested)
             {
                 PerformSave();
@@ -135,7 +125,6 @@ namespace Services
         private void PerformSave()
         {
             _saveService.Save(_saveKey, _playerProgress);
-            Debug.LogWarning("PerformSave():: Save performed");
             _pendingSaves = 0;
             _isSaveRequested = false;
         }
