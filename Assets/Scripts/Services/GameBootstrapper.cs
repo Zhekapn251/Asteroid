@@ -12,6 +12,9 @@ namespace Services
         {
             IAudioService audioManager = FindObjectOfType<AudioManager>();
             ServiceLocator.Register<IAudioService>(audioManager);
+            
+            IScreenSizeProvider screenSizeProvider = new ScreenSizeProvider(Camera.main);
+            ServiceLocator.Register<IScreenSizeProvider>(screenSizeProvider);
         
             ISaveService saveService = new PlayerPrefsSaveService();
             ServiceLocator.Register<ISaveService>(saveService);

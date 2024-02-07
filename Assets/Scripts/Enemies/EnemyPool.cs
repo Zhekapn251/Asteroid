@@ -7,7 +7,7 @@ public class EnemyPool : MonoBehaviour
 {
     [SerializeField] private Enemy _enemyPrefab;
     private const int MAX_SIZE = 50;
-    private const float ENEMY_RELEASE_TIME = 5F;
+    private const float ENEMY_RELEASE_TIME = 15F;
     private int _initialPoolSize = 15;
 
     private ICoroutineService _coroutineService;

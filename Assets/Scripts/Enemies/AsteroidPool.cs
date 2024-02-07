@@ -12,18 +12,18 @@ public class AsteroidPool : MonoBehaviour
 
     private ObjectPool<Asteroid> pool;
     private ICoroutineService _coroutineService;
+    private IScreenSizeProvider _screenSizeProvider;
 
 
     private float timeToCrossScreen;
     private float currentAsteroidSpeed;
 
     float screenHeightInUnits;
-    private Camera _camera;
+    
 
 
     private void Awake()
     {
-        InitMainCamera();
         InitServices();
         InitAsteroidsPool();
     }
@@ -54,13 +54,9 @@ public class AsteroidPool : MonoBehaviour
     private void InitServices()
     {
         _coroutineService = ServiceLocator.Get<ICoroutineService>();
+        _screenSizeProvider = ServiceLocator.Get<IScreenSizeProvider>();
     }
-
-    private void InitMainCamera()
-    {
-        _camera = Camera.main;
-    }
-
+    
     private void OnAsteroidRelease(Asteroid asteroid)
     {
         asteroid.gameObject.SetActive(false);
@@ -76,20 +72,11 @@ public class AsteroidPool : MonoBehaviour
 
     private void CalculateAndSetTimeToCrossScreen()
     {
-        screenHeightInUnits = CalculateScreenHeightInUnits();
+        screenHeightInUnits = _screenSizeProvider.ScreenWorldHeight;
         timeToCrossScreen = screenHeightInUnits / currentAsteroidSpeed;
         timeToCrossScreen += timeToCrossScreen * ADDITIVE_TIME_COEFFICIENT;
     }
-
-    private float CalculateScreenHeightInUnits()
-    {
-        Camera main = _camera;
-        Vector3 topRightCorner = main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, main.transform.position.z));
-        Vector3 bottomLeftCorner = main.ScreenToWorldPoint(new Vector3(0, 0, main.transform.position.z));
-        
-        float screenHeight = topRightCorner.y - bottomLeftCorner.y;
-        return screenHeight;
-    }
+    
 
     private IEnumerator ReturnInPool(Asteroid asteroid)
     {

@@ -8,13 +8,14 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    private Vector2 _spawnRangeX = new Vector2(-3, 3);
-    private Vector2 _spawnRangeY = new Vector2(5, 6);
+    private Vector2 _spawnRangeX;
+    private Vector2 _spawnRangeY;
 
     private ILevelSettingsService _levelSettingsService;
     private IGameStateService _gameStateService;
     private IGameSaveService _gameSaveService;
     private ICoroutineService _coroutineService;
+    private IScreenSizeProvider _screenSizeProvider;
 
     private EnemyPool enemyPool;
     private List<EnemyData> _enemiesData;
@@ -24,23 +25,53 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        _coroutineService = ServiceLocator.Get<ICoroutineService>();
-        enemyPool = GetComponent<EnemyPool>();
-
-        _levelSettingsService = ServiceLocator.Get<ILevelSettingsService>();
-        _gameStateService = ServiceLocator.Get<IGameStateService>();
-        _gameSaveService = ServiceLocator.Get<IGameSaveService>();
+        InitializeServices();
         _levelSettingsService.OnLevelSettingsChanged += SetSpawnRate;
         _gameSaveService.OnGameSave += SaveEnemiesData;
+        InitializeServicesEnemyPool();
+        SetSpawnBoundaries();
         SetSpawnRate();
         SpawnLoadEnemies();
-        _coroutineService.StartGameCoroutine(SpawnEnemyCoroutine());
+        StartEndlessEnemySpawning();
     }
 
     private void OnDestroy()
     {
         _levelSettingsService.OnLevelSettingsChanged -= SetSpawnRate;
         _gameSaveService.OnGameSave -= SaveEnemiesData;
+    }
+
+    public void RemoveEnemy(Enemy enemy)
+    {
+        _enemies.Remove(enemy);
+        enemyPool.ReturnEnemy(enemy);
+    }
+
+    private void StartEndlessEnemySpawning()
+    {
+        _coroutineService.StartGameCoroutine(SpawnEnemyCoroutine());
+    }
+
+    private void InitializeServicesEnemyPool()
+    {
+        enemyPool = GetComponent<EnemyPool>();
+    }
+
+    private void InitializeServices()
+    {
+        _coroutineService = ServiceLocator.Get<ICoroutineService>();
+        _levelSettingsService = ServiceLocator.Get<ILevelSettingsService>();
+        _gameStateService = ServiceLocator.Get<IGameStateService>();
+        _gameSaveService = ServiceLocator.Get<IGameSaveService>();
+        _screenSizeProvider = ServiceLocator.Get<IScreenSizeProvider>();
+    }
+
+    private void SetSpawnBoundaries()
+    {
+        float xBound = _screenSizeProvider.ScreenWorldWidth / 2;
+        _spawnRangeX = new Vector2(-xBound, xBound);
+        float yBound = _screenSizeProvider.ScreenWorldHeight / 2;
+        _spawnRangeY = new Vector2(yBound, yBound + 1);
     }
 
     private void SpawnLoadEnemies()
@@ -95,11 +126,5 @@ public class EnemySpawner : MonoBehaviour
         enemyTransform.position = spawnPosition;
         enemyTransform.parent = gameObject.transform;
         _enemies.Add(enemy);
-    }
-
-    public void RemoveEnemy(Enemy enemy)
-    {
-        _enemies.Remove(enemy);
-        enemyPool.ReturnEnemy(enemy);
     }
 }

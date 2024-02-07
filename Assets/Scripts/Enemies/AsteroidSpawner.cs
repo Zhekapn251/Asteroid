@@ -7,8 +7,8 @@ using Random = UnityEngine.Random;
 
 public class AsteroidSpawner: MonoBehaviour
 {
-    private Vector2 _spawnRangeX = new Vector2(-3, 3);
-    private Vector2 _spawnRangeY = new Vector2(5, 6);
+    private Vector2 _spawnRangeX;
+    private Vector2 _spawnRangeY;
 
     private float _spawnRate;
     
@@ -20,17 +20,29 @@ public class AsteroidSpawner: MonoBehaviour
     private IGameStateService _gameStateService;
     private IGameSaveService _gameSaveService;
     private ICoroutineService _coroutineService;
+    private IScreenSizeProvider _screenSizeProvider;
 
     private void Start()    
     {
-        _coroutineService = ServiceLocator.Get<ICoroutineService>();
-        asteroidPool = FindObjectOfType<AsteroidPool>();
         InitializeServices();
         _levelSettingsService.OnLevelSettingsChanged += SetSpawnRate;
         _gameSaveService.OnGameSave += SaveAsteroidsData;
+        InitializeAsteroidPool();
+        SetSpawnBoundaries();
         SetSpawnRate();
         SpawnLoadEnemies();
+        StartEndlessAsteroidSpawning();
+    }
+
+    private void StartEndlessAsteroidSpawning()
+    {
         _coroutineService.StartGameCoroutine(SpawnerRoutine());
+    }
+
+    public void RemoveAsteroid(Asteroid asteroid)
+    {
+        _asteroids.Remove(asteroid);
+        asteroidPool.ReturnAsteroid(asteroid);
     }
 
     private void OnDestroy()
@@ -39,10 +51,17 @@ public class AsteroidSpawner: MonoBehaviour
         _gameSaveService.OnGameSave -= SaveAsteroidsData;
     }
 
-    public void RemoveAsteroid(Asteroid asteroid)
+    private void InitializeAsteroidPool()
     {
-        _asteroids.Remove(asteroid);
-        asteroidPool.ReturnAsteroid(asteroid);
+        asteroidPool = FindObjectOfType<AsteroidPool>();
+    }
+
+    private void SetSpawnBoundaries()
+    {
+        float xBound = _screenSizeProvider.ScreenWorldWidth / 2;
+        _spawnRangeX = new Vector2(-xBound, xBound);
+        float yBound = _screenSizeProvider.ScreenWorldHeight / 2;
+        _spawnRangeY = new Vector2(yBound, yBound + 1);
     }
 
     private void SpawnLoadEnemies()
@@ -71,6 +90,8 @@ public class AsteroidSpawner: MonoBehaviour
         _levelSettingsService = ServiceLocator.Get<ILevelSettingsService>();
         _gameStateService = ServiceLocator.Get<IGameStateService>();
         _gameSaveService = ServiceLocator.Get<IGameSaveService>();
+        _coroutineService = ServiceLocator.Get<ICoroutineService>();
+        _screenSizeProvider = ServiceLocator.Get<IScreenSizeProvider>();
     }
 
     private void SetSpawnRate()
