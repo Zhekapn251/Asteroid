@@ -5,15 +5,16 @@ namespace Player
 {
     public class PlayerMovement : MonoBehaviour
     {
-        [SerializeField] private float speed = 15f;
-    
+        [SerializeField] private float speed = 5f;
+        private Camera _camera;
         private IGameStateService _gameStateService;
         private IGameSaveService _gameSaveService;
         private InputService _inputService = new InputService();
         private Vector2 screenBounds;
-    
+
         private void Start()
         {
+            _camera = Camera.main;
             _gameStateService = ServiceLocator.Get<IGameStateService>();
             _gameSaveService = ServiceLocator.Get<IGameSaveService>();
             _gameSaveService.OnGameSave += GameSaveServiceOnGameSave;
@@ -23,10 +24,10 @@ namespace Player
 
         private void Update()
         {
-            if(_gameStateService.CurrentGameState != GameState.Playing)
+            if (_gameStateService.CurrentGameState != GameState.Playing)
                 return;
-            MovePlayer(_inputService.GetMovement().x, _inputService.GetMovement().y);
-
+            //MovePlayer(_inputService.GetMovement().x, _inputService.GetMovement().y);
+            MovePlayerByTouch();
             CalculateClampPosition();
         }
 
@@ -40,6 +41,17 @@ namespace Player
         {
             Vector3 movement = new Vector3(horizontalInput, verticalInput, 0) * speed * Time.deltaTime;
             transform.Translate(movement, Space.World);
+        }
+
+        private void MovePlayerByTouch()
+        {
+            if (_inputService.IsTouched())
+            {
+                Touch touch = _inputService.GetTouch();
+                Vector3 touchPosition = _camera.ScreenToWorldPoint(touch.position);
+                touchPosition.z = 0;
+                transform.position = Vector3.MoveTowards(transform.position, touchPosition, speed * Time.deltaTime);
+            }
         }
 
         private void GameSaveServiceOnGameSave()
@@ -60,13 +72,11 @@ namespace Player
 
         private void CalculateScreenBounds()
         {
-        
-            float cameraDistance = Vector3.Distance(transform.position, Camera.main.transform.position);
-            Vector2 screenBottomLeft = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, cameraDistance));
-            Vector2 screenTopRight = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, cameraDistance));
+            float cameraDistance = Vector3.Distance(transform.position, _camera.transform.position);
+            Vector2 screenBottomLeft = _camera.ViewportToWorldPoint(new Vector3(0, 0, cameraDistance));
+            Vector2 screenTopRight = _camera.ViewportToWorldPoint(new Vector3(1, 1, cameraDistance));
 
             screenBounds = screenTopRight - screenBottomLeft;
         }
     }
 }
- 
